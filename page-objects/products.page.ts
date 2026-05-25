@@ -50,28 +50,28 @@ export class ProductPage extends BasePage {
         logger.info(`Selected random item at index: ${randomIndex}`);
     }
 
-async selectRandomMultipleItemsAndGetInfo(count: number): Promise<Product[]> {
-    const totalItems = await this.multipleProductTitles.count();
-    const products: Product[] = [];
+    async selectRandomMultipleItemsAndGetInfo(count: number): Promise<Product[]> {
+        const totalItems = await this.multipleProductTitles.count();
+        const products: Product[] = [];
 
-    const randomIndexes = new Set<number>();
-    while (randomIndexes.size < count) {
-        randomIndexes.add(Math.floor(Math.random() * totalItems));
-    }
-    for (const index of randomIndexes) {
-        const name = (await this.multipleProductTitles.nth(index).innerText()).toLowerCase().trim();
-        const priceText = await this.multipleProductPrices.nth(index).innerText();
-        const price = parseFloat(
-            priceText
-                .replace('$', '')
-                .replace(',', '')
-                .trim()
-        );
-        await this.addToCartBtn.nth(index).click();
-        logger.info(`Added to cart: ${name}, price: ${price}`);
+        const randomIndexes = new Set<number>();
+        while (randomIndexes.size < count) {
+            randomIndexes.add(Math.floor(Math.random() * totalItems));
+        }
+        for (const index of randomIndexes) {
+            const name = (await this.multipleProductTitles.nth(index).innerText()).toLowerCase().trim();
+            const priceText = await this.multipleProductPrices.nth(index).innerText();
+            const price = parseFloat(
+                priceText
+                    .replace('$', '')
+                    .replace(',', '')
+                    .trim()
+            );
+            await this.addToCartBtn.nth(index).click();
+            logger.info(`Added to cart: ${name}, price: ${price}`);
 
-        products.push({ name, price, quantity: 1 });
-    }
-        return products;
+            products.push({ name, price, quantity: 1 });
+        }
+            return products;
     }
 }

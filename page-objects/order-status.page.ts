@@ -56,6 +56,7 @@ export class OrderStatusPage extends BasePage{
     }
 
     async getOrderedProductInfo(): Promise<Product> {
+        await this.orderConfirmationMsg.waitFor({ state: 'visible' });
         const name = await this.getProductName();
         const price = await this.getProductPrice();
         const quantity = await this.getProductQuantity();
@@ -85,7 +86,6 @@ export class OrderStatusPage extends BasePage{
     }
 
     async getConfirmationMsg(): Promise<string>{
-        await this.waitForPage();
         return await this.orderConfirmationMsg.innerText();
     }
 }

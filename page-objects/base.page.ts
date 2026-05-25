@@ -47,13 +47,14 @@ export abstract class BasePage{
         logger.info(`Navigate to department: ${department}`);
     }
 
-    async isPageDisplayed(path: string): Promise<boolean> {
+    async isPageDisplayed(path: string, timeout = 10_000): Promise<boolean> {
         logger.info(`Navigate to ${path}`)
-        return new RegExp(path).test(this.page.url());
-    }
-
-    async waitForPage(): Promise<void> {
-        await this.page.waitForURL(`**${Pages.ORDER_STATUS}**`, {waitUntil:'domcontentloaded'});
+        try {
+            await this.page.waitForURL(`**${path}**`, { timeout });
+            return true;
+        } catch {
+            return false;
+        }
     }
 
     async dismissPopups(): Promise<void> {

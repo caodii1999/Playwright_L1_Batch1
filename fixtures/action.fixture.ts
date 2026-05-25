@@ -204,7 +204,6 @@ export const test = base.extend<{
     isOrderStatusPageDisplayed: async ({page}, use) => {
         const orderStatusPage = new OrderStatusPage(page);
         await use(async() => {
-            await orderStatusPage.waitForPage();
             return await orderStatusPage.isPageDisplayed(Pages.ORDER_STATUS);
         });
     },

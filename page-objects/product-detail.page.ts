@@ -12,8 +12,8 @@ export class ProductDetailPage extends BasePage {
     constructor(page: Page){
         super(page);
         this.addToCartBtn = page.locator("//div[@class = 'product-information-inner']//form[@class='cart']//button[text() = 'Add to cart']").first();
-        this.productName = page.locator("//div[@class = 'product-information-inner']//div[@class = 'fixed-content']//h1[@class = 'product_title entry-title']");
-        this.productPrice = page.locator("//div[@class='row']//p[@class='price']/ins | //div[@class='row']//p[@class='price']/span/bdi");
+        this.productName = page.locator("//div[@class = 'product-information-inner']//div[@class = 'fixed-content']//h1[@class = 'product_title entry-title']").first();
+        this.productPrice = page.locator("//div[@class='row']//p[@class='price']/ins | //div[@class='row']//p[@class='price']/span/bdi").first();
         this.productQuantity = page.locator("//div[@class = 'quantity']//input[@class = 'input-text qty text']");
     }
 
