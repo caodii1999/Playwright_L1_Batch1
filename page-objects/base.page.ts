@@ -47,7 +47,7 @@ export abstract class BasePage{
         logger.info(`Navigate to department: ${department}`);
     }
 
-    async isPageDisplayed(path: string, timeout = 10_000): Promise<boolean> {
+    async isUrlContained(path: string, timeout = 10_000): Promise<boolean> {
         logger.info(`Navigate to ${path}`)
         try {
             await this.page.waitForURL(`**${path}**`, { timeout });

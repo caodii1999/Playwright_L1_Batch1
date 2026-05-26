@@ -32,11 +32,11 @@ export class ProductPage extends BasePage {
     }
 
     async isGridView(): Promise<boolean> {
-        return this.isPageDisplayed('view_mode=grid');
+        return this.isUrlContained('view_mode=grid');
     }
 
     async isListView(): Promise<boolean> {
-        return this.isPageDisplayed('view_mode=list');
+        return this.isUrlContained('view_mode=list');
     }
 
     async selectRandomItem(): Promise<void> {

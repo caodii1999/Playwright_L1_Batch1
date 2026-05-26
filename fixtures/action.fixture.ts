@@ -155,7 +155,7 @@ export const test = base.extend<{
     isCheckoutPageDisplayed: async ({page}, use) => {
         const checkoutPage = new CheckoutPage(page);
         await use(async() => {
-            return await checkoutPage.isPageDisplayed(Pages.CHECKOUT);
+            return await checkoutPage.isUrlContained(Pages.CHECKOUT);
         });
     },
 
@@ -204,7 +204,7 @@ export const test = base.extend<{
     isOrderStatusPageDisplayed: async ({page}, use) => {
         const orderStatusPage = new OrderStatusPage(page);
         await use(async() => {
-            return await orderStatusPage.isPageDisplayed(Pages.ORDER_STATUS);
+            return await orderStatusPage.isUrlContained(Pages.ORDER_STATUS);
         });
     },
 
