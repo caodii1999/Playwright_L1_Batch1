@@ -1,21 +1,18 @@
-import { test, expect } from '../fixtures/action.fixture';
+import { test, expect } from '../fixtures/index';
 import { ORDER_CONFIRMATION_MSG } from '../constants/order-status.constants';
 
 test('Verify users can buy multiple item successfully', async ({
+    homePage, productPage, productDetailPage,shoppingCartPage, checkoutPage, orderStatusPage,
     goto,
     goToCart,
     registerAccount,
-    navigateToAccountPage,
     login,
     navigateToShopPage,
-    clickCheckout,
     fillBillingInfo,
     selectDefaultPaymentMethod,
-    clickPlaceOrder,
-    getConfirmationMsg,
 }) => {
     await goto();
-    await navigateToAccountPage();
+    await homePage.navigateToAccountPage();
     await registerAccount();
     await login();
     await navigateToShopPage();
@@ -23,11 +20,11 @@ test('Verify users can buy multiple item successfully', async ({
     // not yet implemented getMultipleProducts
     await goToCart();
    
-    await clickCheckout();
+    await shoppingCartPage.clickCheckout();
     
     await fillBillingInfo();
     await selectDefaultPaymentMethod();
-    await clickPlaceOrder();
+    await checkoutPage.clickPlaceOrder();
 
-    expect.soft(await getConfirmationMsg()).toEqual(ORDER_CONFIRMATION_MSG);
+    expect.soft(await orderStatusPage.getConfirmationMsg()).toEqual(ORDER_CONFIRMATION_MSG);
 });

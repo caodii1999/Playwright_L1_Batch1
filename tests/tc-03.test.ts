@@ -1,94 +1,79 @@
-import { test, expect } from '../fixtures/action.fixture';
+import { test, expect } from '../fixtures/index';
 import { ORDER_CONFIRMATION_MSG } from '../constants/order-status.constants';
 
 test.describe('Buy item flow', () => {
     test('Direct bank transfer', async ({
+        homePage, productPage, productDetailPage,shoppingCartPage, checkoutPage, orderStatusPage,
         goto,
         registerAccount,
-        navigateToAccountPage,
         login,
         navigateToShopPage,
-        selectRandomItem,
-        clickOnAddToCart,
         goToCart,
-        clickCheckout,
         fillBillingInfo,
         selectDefaultPaymentMethod,
-        clickPlaceOrder,
-        getConfirmationMsg,
     }) => {
         await goto();
-        await navigateToAccountPage();
+        await homePage.navigateToAccountPage();
         await registerAccount();
         await login();
         await navigateToShopPage();
-        await selectRandomItem();
-        await clickOnAddToCart();
+        await productPage.selectRandomItem();
+        await productDetailPage.clickOnAddToCart();
         await goToCart();
-        await clickCheckout();
+        await shoppingCartPage.clickCheckout();
         await fillBillingInfo();
         await selectDefaultPaymentMethod();
-        await clickPlaceOrder();
-        expect.soft(await getConfirmationMsg()).toEqual(ORDER_CONFIRMATION_MSG);
+        await checkoutPage.clickPlaceOrder();
+        expect.soft(await orderStatusPage.getConfirmationMsg()).toEqual(ORDER_CONFIRMATION_MSG);
     });
 
     test('Check payments', async ({
+        homePage, productPage, productDetailPage,shoppingCartPage, checkoutPage, orderStatusPage,
         goto,
         registerAccount,
-        navigateToAccountPage,
         login,
         navigateToShopPage,
-        selectRandomItem,
-        clickOnAddToCart,
         goToCart,
-        clickCheckout,
         fillBillingInfo,
         selectCheckPaymentMethod,
-        clickPlaceOrder,
-        getConfirmationMsg,
     }) => {
         await goto();
-        await navigateToAccountPage();
+        await homePage.navigateToAccountPage();
         await registerAccount();
         await login();
         await navigateToShopPage();
-        await selectRandomItem();
-        await clickOnAddToCart();
+        await productPage.selectRandomItem();
+        await productDetailPage.clickOnAddToCart();
         await goToCart();
-        await clickCheckout();
+        await shoppingCartPage.clickCheckout();
         await fillBillingInfo();
         await selectCheckPaymentMethod();
-        await clickPlaceOrder();
-        expect.soft(await getConfirmationMsg()).toEqual(ORDER_CONFIRMATION_MSG);
+        await checkoutPage.clickPlaceOrder();
+        expect.soft(await orderStatusPage.getConfirmationMsg()).toEqual(ORDER_CONFIRMATION_MSG);
     });
 
     test('Cash on delivery', async ({
+        homePage, productPage, productDetailPage,shoppingCartPage, checkoutPage, orderStatusPage,
         goto,
         registerAccount,
-        navigateToAccountPage,
         login,
         navigateToShopPage,
-        selectRandomItem,
-        clickOnAddToCart,
         goToCart,
-        clickCheckout,
         fillBillingInfo,
         selectCODMethod,
-        clickPlaceOrder,
-        getConfirmationMsg,
     }) => {
         await goto();
-        await navigateToAccountPage();
+        await homePage.navigateToAccountPage();
         await registerAccount();
         await login();
         await navigateToShopPage();
-        await selectRandomItem();
-        await clickOnAddToCart();
+        await productPage.selectRandomItem();
+        await productDetailPage.clickOnAddToCart();
         await goToCart();
-        await clickCheckout();
+        await shoppingCartPage.clickCheckout();
         await fillBillingInfo();
         await selectCODMethod();
-        await clickPlaceOrder();
-        expect.soft(await getConfirmationMsg()).toEqual(ORDER_CONFIRMATION_MSG);
+        await checkoutPage.clickPlaceOrder();
+        expect.soft(await orderStatusPage.getConfirmationMsg()).toEqual(ORDER_CONFIRMATION_MSG);
     });
 });
