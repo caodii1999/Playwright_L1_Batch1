@@ -72,6 +72,6 @@ export class ProductPage extends BasePage {
 
             products.push({ name, price, quantity: 1 });
         }
-            return products;
+        return products;
     }
 }

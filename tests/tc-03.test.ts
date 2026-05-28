@@ -12,19 +12,35 @@ test.describe('Buy item flow', () => {
         fillBillingInfo,
         selectDefaultPaymentMethod,
     }) => {
-        await goto();
-        await homePage.navigateToAccountPage();
-        await registerAccount();
-        await login();
-        await navigateToShopPage();
-        await productPage.selectRandomItem();
-        await productDetailPage.clickOnAddToCart();
-        await goToCart();
-        await shoppingCartPage.clickCheckout();
-        await fillBillingInfo();
-        await selectDefaultPaymentMethod();
-        await checkoutPage.clickPlaceOrder();
-        expect.soft(await orderStatusPage.getConfirmationMsg()).toEqual(ORDER_CONFIRMATION_MSG);
+        await test.step("1. Open browser and go to https://demo.testarchitect.com/", async() =>{
+            await goto();
+        });
+        await test.step("2. Login with valid credentials ", async() =>{
+            await homePage.navigateToAccountPage();
+            await registerAccount();
+            await login();
+        });
+        await test.step("3. Go to Shop page", async() =>{
+            await navigateToShopPage();
+        });
+        await test.step("4. Select an item and add to cart", async() =>{
+            await productPage.selectRandomItem();
+            await productDetailPage.clickOnAddToCart();
+            await goToCart();
+        });
+        await test.step("5. Go to Checkout page", async() =>{
+            await shoppingCartPage.clickCheckout();
+        });
+        await test.step("6. Choose a different payment method (Direct bank transfer)", async() =>{
+            await selectDefaultPaymentMethod();
+        });
+        await test.step("7. Complete the payment process", async() =>{
+            await fillBillingInfo();
+            await checkoutPage.clickPlaceOrder();
+        });
+        await test.step("8. Verify order confirmation message", async() =>{
+            expect.soft(await orderStatusPage.getConfirmationMsg()).toEqual(ORDER_CONFIRMATION_MSG);
+        });   
     });
 
     test('Check payments', async ({
@@ -37,19 +53,35 @@ test.describe('Buy item flow', () => {
         fillBillingInfo,
         selectCheckPaymentMethod,
     }) => {
-        await goto();
-        await homePage.navigateToAccountPage();
-        await registerAccount();
-        await login();
-        await navigateToShopPage();
-        await productPage.selectRandomItem();
-        await productDetailPage.clickOnAddToCart();
-        await goToCart();
-        await shoppingCartPage.clickCheckout();
-        await fillBillingInfo();
-        await selectCheckPaymentMethod();
-        await checkoutPage.clickPlaceOrder();
-        expect.soft(await orderStatusPage.getConfirmationMsg()).toEqual(ORDER_CONFIRMATION_MSG);
+        await test.step("1. Open browser and go to https://demo.testarchitect.com/", async() =>{
+            await goto();
+        });
+        await test.step("2. Login with valid credentials ", async() =>{
+            await homePage.navigateToAccountPage();
+            await registerAccount();
+            await login();
+        });
+        await test.step("3. Go to Shop page", async() =>{
+            await navigateToShopPage();
+        });
+        await test.step("4. Select an item and add to cart", async() =>{
+            await productPage.selectRandomItem();
+            await productDetailPage.clickOnAddToCart();
+            await goToCart();
+        });
+        await test.step("5. Go to Checkout page", async() =>{
+            await shoppingCartPage.clickCheckout();
+        });
+        await test.step("6. Choose a different payment method (Check Payment)", async() =>{
+            await selectCheckPaymentMethod();
+        });
+        await test.step("7. Complete the payment process", async() =>{
+            await fillBillingInfo();
+            await checkoutPage.clickPlaceOrder();
+        });
+        await test.step("8. Verify order confirmation message", async() =>{
+            expect.soft(await orderStatusPage.getConfirmationMsg()).toEqual(ORDER_CONFIRMATION_MSG);
+        });
     });
 
     test('Cash on delivery', async ({
@@ -62,18 +94,34 @@ test.describe('Buy item flow', () => {
         fillBillingInfo,
         selectCODMethod,
     }) => {
-        await goto();
-        await homePage.navigateToAccountPage();
-        await registerAccount();
-        await login();
-        await navigateToShopPage();
-        await productPage.selectRandomItem();
-        await productDetailPage.clickOnAddToCart();
-        await goToCart();
-        await shoppingCartPage.clickCheckout();
-        await fillBillingInfo();
-        await selectCODMethod();
-        await checkoutPage.clickPlaceOrder();
-        expect.soft(await orderStatusPage.getConfirmationMsg()).toEqual(ORDER_CONFIRMATION_MSG);
+        await test.step("1. Open browser and go to https://demo.testarchitect.com/", async() =>{
+            await goto();
+        });
+        await test.step("2. Login with valid credentials ", async() =>{
+            await homePage.navigateToAccountPage();
+            await registerAccount();
+            await login();
+        });
+        await test.step("3. Go to Shop page", async() =>{
+            await navigateToShopPage();
+        });
+        await test.step("4. Select an item and add to cart", async() =>{
+            await productPage.selectRandomItem();
+            await productDetailPage.clickOnAddToCart();
+            await goToCart();
+        });
+        await test.step("5. Go to Checkout page", async() =>{
+            await shoppingCartPage.clickCheckout();
+        });
+        await test.step("6. Choose a different payment method (Cash on delivery)", async() =>{
+            await selectCODMethod();
+        });
+        await test.step("7. Complete the payment process", async() =>{
+            await fillBillingInfo();
+            await checkoutPage.clickPlaceOrder();
+        });
+        await test.step("8. Verify order confirmation message", async() =>{
+            expect.soft(await orderStatusPage.getConfirmationMsg()).toEqual(ORDER_CONFIRMATION_MSG);
+        });
     });
 });
