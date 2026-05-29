@@ -88,4 +88,31 @@ export class OrderStatusPage extends BasePage{
     async getConfirmationMsg(): Promise<string>{
         return await this.orderConfirmationMsg.innerText();
     }
+
+    async getAllOrderedProducts(): Promise<Product[]> {
+        logger.info('Reading all products in cart...');
+        const count = await this.productName.count();
+        const products: Product[] = [];
+
+        for (let i = 0; i < count; i++) {
+            const name = (await this.productName.nth(i).innerText()).toLowerCase().trim();
+
+            const priceText = await this.productPrice.nth(i).innerText();
+            const price = parseFloat(priceText
+                .replace('\u00A0', ' ')
+                .replace('$', '')
+                .replace(',', '')
+                .replace(/[^0-9.\-]/g, '')
+                .trim()
+            );
+            const qtyText = await this.productQuantity.nth(i).innerText();
+            const quantity = parseInt(qtyText.replace('×', '').trim())
+
+            logger.info(`Item ${i} -> name='${name}', price=${price}, qty=${quantity}`);
+            products.push({ name, price, quantity });
+        }
+
+        logger.info(`Total items read: ${count}`);
+        return products;
+    }
 }
