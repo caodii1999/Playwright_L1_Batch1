@@ -26,7 +26,7 @@ test("Verify orders appear in order history", async ({
     await homePage.navigateToAccountPage();
     await registerAccount();
     await login();
-    await navigateToShopPage();
+
     await productPage.selectRandomItem();
     await productDetailPage.clickOnAddToCart();
     await productDetailPage.goToCart();
