@@ -9,6 +9,7 @@ import { OrderStatusPage } from "../page-objects/order-status.page";
 import { Product } from "../types/product.type";
 import { Pages } from "../enum/pages.enum";
 import { PaymentMethod } from "../enum/payments.enum";
+import { Sort } from "../enum/sort.enum";
 
 export const test = base.extend<{
   goto: (path?: string) => Promise<void>;
@@ -23,6 +24,8 @@ export const test = base.extend<{
   isOrderStatusPageDisplayed: () => Promise<boolean>;
   navigateToShopPage: () => Promise<void>;
   selectRandomMultipleItemsAndGetInfo: (count: number) => Promise<Product[]>;
+  selectSortLowToHigh: () => Promise<void>;
+  selectSortHighToLow: () => Promise<void>;
 }>({
   goto: async ({ homePage }, use) => {
     await use(async (path = "/") => {
@@ -93,6 +96,18 @@ export const test = base.extend<{
     await use(async () => {
       await accountPage.navigateToPage(Pages.SHOP);
     });
+  },
+
+  selectSortLowToHigh: async ({productPage}, use) => {
+    await use(async () => {
+      await productPage.selectSortOption(Sort.LOW_TO_HIGH);
+    })
+  },
+
+  selectSortHighToLow: async ({productPage}, use) => {
+    await use(async () => {
+      await productPage.selectSortOption(Sort.HIGH_TO_LOW);
+    })
   },
 });
 

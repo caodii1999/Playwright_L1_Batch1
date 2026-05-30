@@ -2,6 +2,7 @@ import { Locator, Page } from "@playwright/test";
 import { BasePage } from "./base.page";
 import { logger } from "../helpers/logger";
 import { Product } from "../types/product.type";
+import { Sort } from "../enum/sort.enum";
 
 export class ProductPage extends BasePage {
   readonly gridViewBtn: Locator;
@@ -9,6 +10,8 @@ export class ProductPage extends BasePage {
   readonly multipleProductTitles: Locator;
   readonly multipleProductPrices: Locator;
   readonly addToCartBtn: Locator;
+  readonly sortBtn: Locator;
+  readonly allProducts: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -23,6 +26,8 @@ export class ProductPage extends BasePage {
     this.addToCartBtn = page.locator(
       "//div[@class = 'text-center product-details']//h2[@class = 'product-title']//following-sibling::a[text() = 'Add to cart']",
     );
+    this.sortBtn = page.locator("//select[@class = 'orderby']");
+    this.allProducts = page.locator("//div[@class = 'et-loader product-ajax']");
   }
   async clickGridView(): Promise<void> {
     await this.gridViewBtn.click();
@@ -107,5 +112,75 @@ export class ProductPage extends BasePage {
       (el) => el.className.includes("added"),
       element,
     );
+  }
+
+  async waitUntilProductLoaded(): Promise<void> {
+    const element = await this.allProducts.elementHandle();
+
+    if (!element) {
+      throw new Error("Add To Cart button not found");
+    }
+
+    await this.page.waitForFunction(
+      (el) => !el.className.includes("loading"),
+      element,
+    );
+  }
+
+  async selectSortOption(sort: Sort): Promise<void> {
+    await this.waitUntilProductLoaded();
+    await this.sortBtn.scrollIntoViewIfNeeded();
+    await this.sortBtn.selectOption(sort);
+    logger.info(`already selected sort`);
+  }
+
+  private async getPrice(index: number): Promise<number> {
+    const priceText = await this.multipleProductPrices.nth(index).innerText();
+    return parseFloat(
+      priceText
+        .replace("\u00A0", " ")
+        .replace("$", "")
+        .replace(",", "")
+        .replace(/[^0-9.\-]/g, "")
+        .trim(),
+    );
+  }
+
+  private async getCurrentPrice(index: number): Promise<number> {
+    return this.getPrice(index);
+  }
+
+  private async getNextPrice(index: number): Promise<number> {
+    return this.getPrice(index + 1);
+  }
+
+  async isPriceSortedLowToHigh(): Promise<boolean> {
+    await this.waitUntilProductLoaded();
+    const count = await this.multipleProductPrices.count();
+
+    for (let i = 0; i < count - 1; i++) {
+      const currentPrice = await this.getCurrentPrice(i);
+      const nextPrice = await this.getNextPrice(i);
+
+      if (currentPrice > nextPrice) {
+        return false;
+      } logger.info(`compare ${currentPrice} to ${nextPrice}`);
+    }
+    return true;
+  }
+
+  async isPriceSortedHighToLow(): Promise<boolean> {
+    await this.waitUntilProductLoaded();
+    const count = await this.multipleProductPrices.count();
+
+    for (let i = 0; i < count - 1; i++) {
+      const currentPrice = await this.getCurrentPrice(i);
+      const nextPrice = await this.getNextPrice(i);
+
+      if (currentPrice < nextPrice) {
+        return false;
+      } logger.info(`compare ${currentPrice} to ${nextPrice}`);
+    }
+    return true;
   }
 }
