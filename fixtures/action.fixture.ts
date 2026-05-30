@@ -10,6 +10,7 @@ import { Product } from "../types/product.type";
 import { Pages } from "../enum/pages.enum";
 import { PaymentMethod } from "../enum/payments.enum";
 import { Sort } from "../enum/sort.enum";
+import { AccountNavItems } from "../enum/account-nav-items.enum";
 
 export const test = base.extend<{
   goto: (path?: string) => Promise<void>;
@@ -26,6 +27,8 @@ export const test = base.extend<{
   selectRandomMultipleItemsAndGetInfo: (count: number) => Promise<Product[]>;
   selectSortLowToHigh: () => Promise<void>;
   selectSortHighToLow: () => Promise<void>;
+  selectOrderHistory: () => Promise<void>;
+  navigateToAccountPage: () => Promise<void>;
 }>({
   goto: async ({ homePage }, use) => {
     await use(async (path = "/") => {
@@ -92,22 +95,28 @@ export const test = base.extend<{
     });
   },
 
-  navigateToShopPage: async ({ accountPage }, use) => {
+  navigateToShopPage: async ({ homePage }, use) => {
     await use(async () => {
-      await accountPage.navigateToPage(Pages.SHOP);
+      await homePage.navigateToPage(Pages.SHOP);
     });
   },
 
-  selectSortLowToHigh: async ({productPage}, use) => {
+  selectSortLowToHigh: async ({ productPage }, use) => {
     await use(async () => {
       await productPage.selectSortOption(Sort.LOW_TO_HIGH);
-    })
+    });
   },
 
-  selectSortHighToLow: async ({productPage}, use) => {
+  selectSortHighToLow: async ({ productPage }, use) => {
     await use(async () => {
       await productPage.selectSortOption(Sort.HIGH_TO_LOW);
-    })
+    });
+  },
+
+  selectOrderHistory: async ({ accountPage }, use) => {
+    await use(async () => {
+      await accountPage.selectAccountNavItems(AccountNavItems.ORDERS);
+    });
   },
 });
 

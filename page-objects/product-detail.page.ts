@@ -76,10 +76,6 @@ export class ProductDetailPage extends BasePage {
     logger.info(
       `product name: ${name}, price: ${price}, quantity: ${quantity}`,
     );
-    return {
-      name: name,
-      price: price,
-      quantity: quantity,
-    };
+    return { name: name, price: price, quantity: quantity };
   }
 }

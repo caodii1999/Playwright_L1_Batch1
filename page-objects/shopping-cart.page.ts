@@ -21,7 +21,9 @@ export class ShoppingCartPage extends BasePage {
     this.productQuantity = page.locator(
       "//td[@class = 'product-quantity']//div//input[@class = 'input-text qty text']",
     );
-    this.productsNames = page.locator("//table[@class = 'shop_table shop_table_responsive cart woocommerce-cart-form__contents']//tbody//tr//td//div//a[@class = 'product-title']");
+    this.productsNames = page.locator(
+      "//table[@class = 'shop_table shop_table_responsive cart woocommerce-cart-form__contents']//tbody//tr//td//div//a[@class = 'product-title']",
+    );
     this.productPrices = page.locator(
       "//td[@class = 'product-price']//span//bdi",
     );

@@ -164,7 +164,8 @@ export class ProductPage extends BasePage {
 
       if (currentPrice > nextPrice) {
         return false;
-      } logger.info(`compare ${currentPrice} to ${nextPrice}`);
+      }
+      logger.info(`compare ${currentPrice} to ${nextPrice}`);
     }
     return true;
   }
@@ -179,7 +180,8 @@ export class ProductPage extends BasePage {
 
       if (currentPrice < nextPrice) {
         return false;
-      } logger.info(`compare ${currentPrice} to ${nextPrice}`);
+      }
+      logger.info(`compare ${currentPrice} to ${nextPrice}`);
     }
     return true;
   }

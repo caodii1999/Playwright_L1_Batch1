@@ -1,5 +1,4 @@
 import { test, expect } from "../fixtures/index";
-import { ShoppingCartPage } from "../page-objects/shopping-cart.page";
 
 test.describe("Verify users can sort items by price", () => {
   test("Verify low to high", async ({

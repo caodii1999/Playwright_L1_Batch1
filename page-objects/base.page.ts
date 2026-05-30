@@ -25,7 +25,7 @@ export abstract class BasePage {
   }
 
   constructor(protected page: Page) {
-    this.loginSignUpBtn = page.getByRole("link", { name: "Log in / Sign up" });
+    this.loginSignUpBtn = page.locator("//a[contains(@href,'my-account')]//span[contains(@class,'et-element-label inline-block mob-hide')]");
     this.cartBtn = page.locator(
       "//div[contains(@class,'et_element')]/div[contains(@class,'et_b_header-cart')]/a",
     );
