@@ -5,6 +5,7 @@ import { PaymentMethod } from "../enum/payments.enum";
 import { logger } from "../helpers/logger";
 import { BillingInputs } from "../enum/billing-inputs.enum";
 import { Billing } from "../types/billing.type";
+import { BillingErrors } from "../enum/billing-errors.enum";
 
 export class CheckoutPage extends BasePage {
   readonly productNameAndQuantity: Locator;
@@ -82,11 +83,7 @@ export class CheckoutPage extends BasePage {
     logger.info(
       `ordered product name: ${name}, price: ${price}, quantity: ${quantity}`,
     );
-    return {
-      name: name,
-      price: price,
-      quantity: quantity,
-    };
+    return { name: name, price: price, quantity: quantity };
   }
 
   async selectPaymentMethod(payment: PaymentMethod): Promise<void> {
@@ -117,6 +114,15 @@ export class CheckoutPage extends BasePage {
     await this.placeOrderBtn.click();
   }
 
-  
-
+  async isErrorMsgMatchMissingField(): Promise<boolean> {
+    const expectedErrorMessages: Record<string, string> = {
+      billing_first_name: BillingErrors.BILLING_FIRST_NAME_ERROR,
+      billing_last_name: BillingErrors.BILLING_LAST_NAME_ERROR,
+      billing_address_1: BillingErrors.BILLING_ADDRESS_ERROR,
+      billing_city: BillingErrors.BILLING_CITY_ERROR,
+      billing_phone: BillingErrors.BILLING_PHONE_ERROR,
+      billing_email: BillingErrors.BILLING_EMAIL_ERROR,
+    };
+    return true;
+  }
 }

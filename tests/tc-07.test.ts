@@ -26,15 +26,11 @@ test("Ensure proper error handling when mandatory fields are blank", async ({
     await shoppingCartPage.clickCheckout();
   });
 
-  await test.step("1. Leave mandatory fields (address, payment info) blank", async () => {
-   
-  });
+  await test.step("1. Leave mandatory fields (address, payment info) blank", async () => {});
 
   await test.step("2. Click on Orders in left navigation", async () => {
     await selectOrderHistory();
   });
 
-  await test.step("3. Verify order details", async () => {
-   
-  });
+  await test.step("3. Verify order details", async () => {});
 });
