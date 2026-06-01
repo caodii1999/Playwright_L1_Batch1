@@ -116,4 +116,7 @@ export class CheckoutPage extends BasePage {
   async clickPlaceOrder(): Promise<void> {
     await this.placeOrderBtn.click();
   }
+
+  
+
 }
