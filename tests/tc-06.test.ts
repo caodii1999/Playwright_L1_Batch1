@@ -1,23 +1,23 @@
 import { test, expect } from "../fixtures/index";
-import { ORDER_CONFIRMATION_MSG } from "../constants/order-status.constants";
+import { ORDER_CONFIRMATION_MSG } from "../constants/messages.constant";
+import { Pages } from "../enum/pages.enum";
 
 test("Verify users try to buy an item without logging in (As a guest)", async ({
+  homePage,
   productPage,
   productDetailPage,
   shoppingCartPage,
   checkoutPage,
   orderStatusPage,
-  goto,
-  navigateToShopPage,
   fillBillingInfo,
   selectDefaultPaymentMethod,
 }) => {
   await test.step("1. Open https://demo.testarchitect.com/", async () => {
-    await goto();
+    await homePage.goto();
   });
 
   await test.step("2. Navigate to 'Shop' or 'Products' section", async () => {
-    await navigateToShopPage();
+    await homePage.navigateToPage(Pages.SHOP);
   });
 
   await test.step("3. Add a product to cart", async () => {

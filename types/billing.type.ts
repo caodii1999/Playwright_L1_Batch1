@@ -7,4 +7,6 @@ export type Billing = {
     country: string;
     phoneNumber: string;
     email: string;
+    zip?: string;
+    state?: string;
 }

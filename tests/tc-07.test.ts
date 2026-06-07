@@ -1,25 +1,16 @@
 import { test, expect } from "../fixtures/index";
-import { Order } from "../types/order.type";
+import { Pages } from "../enum/pages.enum";
 
 test("Ensure proper error handling when mandatory fields are blank", async ({
   homePage,
   productPage,
   shoppingCartPage,
   checkoutPage,
-  orderStatusPage,
-  accountPage,
   productDetailPage,
-  goto,
-  registerAccount,
-  login,
-  navigateToShopPage,
-  fillBillingInfo,
-  selectDefaultPaymentMethod,
-  selectOrderHistory,
 }) => {
   await test.step("User is at checkout", async () => {
-    await goto();
-    await navigateToShopPage();
+    await homePage.goto();
+    await homePage.navigateToPage(Pages.SHOP);
     await productPage.selectRandomItem();
     await productDetailPage.clickOnAddToCart();
     await productDetailPage.goToCart();
@@ -28,9 +19,11 @@ test("Ensure proper error handling when mandatory fields are blank", async ({
 
   await test.step("1. Leave mandatory fields (address, payment info) blank", async () => {});
 
-  await test.step("2. Click on Orders in left navigation", async () => {
-    await selectOrderHistory();
+  await test.step(" 2. Click 'Confirm Order'", async () => {
+    await checkoutPage.clickPlaceOrder();
   });
 
-  await test.step("3. Verify order details", async () => {});
+  await test.step(" 3. Verify error messages", async () => {
+    expect(await checkoutPage.isErrorMsgMatchMissingField()).toBeTruthy();
+  });
 });

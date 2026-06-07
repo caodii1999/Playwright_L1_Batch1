@@ -1,34 +1,36 @@
 import { test, expect } from "../fixtures/index";
-import { ORDER_CONFIRMATION_MSG } from "../constants/order-status.constants";
+import { ORDER_CONFIRMATION_MSG } from "../constants/messages.constant";
 import { Product } from "../types/product.type";
+import { Pages } from "../enum/pages.enum";
 
 test("Verify users can buy multiple item successfully", async ({
   homePage,
+  accountPage,
   productPage,
   shoppingCartPage,
   checkoutPage,
   orderStatusPage,
-  goto,
+
+  user,
+
   registerAccount,
-  login,
-  navigateToShopPage,
   fillBillingInfo,
   selectDefaultPaymentMethod,
 }) => {
   let expectSelectedProducts: Product[];
 
   await test.step("1. Open browser and go to https://demo.testarchitect.com/", async () => {
-    await goto();
+    await homePage.goto();
   });
 
   await test.step("2. Login with valid credentials ", async () => {
     await homePage.navigateToAccountPage();
     await registerAccount();
-    await login();
+    await accountPage.login(user);
   });
 
   await test.step("3. Go to Shop page", async () => {
-    await navigateToShopPage();
+    await homePage.navigateToPage(Pages.SHOP);
   });
 
   await test.step("4. Select multiple items and add to cart", async () => {

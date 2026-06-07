@@ -1,29 +1,29 @@
 import { test, expect } from "../fixtures/index";
+import { Pages } from "../enum/pages.enum";
 
 test.describe("Verify users can sort items by price", () => {
   test("Verify low to high", async ({
     homePage,
+    accountPage,
     productPage,
-    goto,
+    user,
     registerAccount,
-    login,
-    navigateToShopPage,
     selectSortLowToHigh,
   }) => {
     await test.step("1. Open browser and go to https://demo.testarchitect.com/", async () => {
-      await goto();
+      await homePage.goto();
     });
 
     await test.step("2. Login with valid credentials ", async () => {
       await homePage.navigateToAccountPage();
       await registerAccount();
-      await login();
+      await accountPage.login(user);
     });
 
     await test.step("3. Go to Shop page", async () => {
-      await navigateToShopPage();
+      await homePage.navigateToPage(Pages.SHOP);
     });
-
+    
     await test.step("4. Switch view to list", async () => {
       await productPage.clickListView();
     });
@@ -39,32 +39,31 @@ test.describe("Verify users can sort items by price", () => {
 
   test("Verify high to low", async ({
     homePage,
+    accountPage,
     productPage,
-    goto,
+    user,
     registerAccount,
-    login,
-    navigateToShopPage,
     selectSortHighToLow,
   }) => {
     await test.step("1. Open browser and go to https://demo.testarchitect.com/", async () => {
-      await goto();
+      await homePage.goto();
     });
 
     await test.step("2. Login with valid credentials ", async () => {
       await homePage.navigateToAccountPage();
       await registerAccount();
-      await login();
+      await accountPage.login(user);
     });
 
     await test.step("3. Go to Shop page", async () => {
-      await navigateToShopPage();
+      await homePage.navigateToPage(Pages.SHOP);
     });
 
     await test.step("4. Switch view to list", async () => {
       await productPage.clickListView();
     });
 
-    await test.step("5. Sort items by price (low to high)", async () => {
+    await test.step("5. Sort items by price (high to low)", async () => {
       await selectSortHighToLow();
     });
 

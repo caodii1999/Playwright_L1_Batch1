@@ -1,22 +1,14 @@
 import { test as base } from "./page.fixture";
-import { HomePage } from "../page-objects/home.page";
-import { AccountPage } from "../page-objects/account.page";
-import { ProductPage } from "../page-objects/products.page";
-import { Departments } from "../enum/departments.enum";
-import { CheckoutPage } from "../page-objects/checkout.page";
-import { OrderStatusPage } from "../page-objects/order-status.page";
 
 import { Product } from "../types/product.type";
 import { Pages } from "../enum/pages.enum";
 import { PaymentMethod } from "../enum/payments.enum";
 import { Sort } from "../enum/sort.enum";
 import { AccountNavItems } from "../enum/account-nav-items.enum";
+import { User } from "../types/user.type";
 
 export const test = base.extend<{
-  goto: (path?: string) => Promise<void>;
-  login: () => Promise<void>;
   registerAccount: () => Promise<void>;
-  navigateToElectronicComponentsSupplies: () => Promise<void>;
   isCheckoutPageDisplayed: () => Promise<boolean>;
   fillBillingInfo: () => Promise<void>;
   selectDefaultPaymentMethod: () => Promise<void>;
@@ -29,31 +21,40 @@ export const test = base.extend<{
   selectSortHighToLow: () => Promise<void>;
   selectOrderHistory: () => Promise<void>;
   navigateToAccountPage: () => Promise<void>;
+  userAddedAnItemsIntoCart: (user: User) => Promise<void>;
 }>({
-  goto: async ({ homePage }, use) => {
-    await use(async (path = "/") => {
-      await homePage.goto(path);
+  userAddedAnItemsIntoCart: async (
+    {
+      homePage,
+      accountPage,
+      productPage,
+      productDetailPage,
+      shoppingCartPage,
+      checkoutPage,
+      registerAccount,
+      fillBillingInfo,
+      selectDefaultPaymentMethod
+    },
+    use,
+  ) => {
+    await use(async (user) => {
+      await homePage.goto();
+      await accountPage.navigateToAccountPage();
+      await registerAccount();
+      await accountPage.login(user);
+      await homePage.navigateToPage(Pages.SHOP);
+      await productPage.selectRandomItem();
+      await productDetailPage.clickOnAddToCart();
+      await accountPage.navigateToAccountPage();
+      await accountPage.logout();
     });
   },
-
-  login: async ({ accountPage, user }, use) => {
-    await use(async () => {
-      await accountPage.login(user.username, user.password);
-    });
-  },
-
-  registerAccount: async ({ accountPage, page, user, mail }, use) => {
+  registerAccount: async ({ homePage, accountPage, page, user, mail }, use) => {
     await use(async () => {
       await accountPage.register(user.username);
       const resetUrl = await mail.getResetPasswordUrl();
       await page.goto(resetUrl);
       await accountPage.enterNewPassword(user.password);
-    });
-  },
-
-  navigateToElectronicComponentsSupplies: async ({ accountPage }, use) => {
-    await use(async () => {
-      await accountPage.navigateToDeparment(Departments.ELECTRONIC_COMPONENT);
     });
   },
 
@@ -95,12 +96,6 @@ export const test = base.extend<{
     });
   },
 
-  navigateToShopPage: async ({ homePage }, use) => {
-    await use(async () => {
-      await homePage.navigateToPage(Pages.SHOP);
-    });
-  },
-
   selectSortLowToHigh: async ({ productPage }, use) => {
     await use(async () => {
       await productPage.selectSortOption(Sort.LOW_TO_HIGH);
@@ -110,12 +105,6 @@ export const test = base.extend<{
   selectSortHighToLow: async ({ productPage }, use) => {
     await use(async () => {
       await productPage.selectSortOption(Sort.HIGH_TO_LOW);
-    });
-  },
-
-  selectOrderHistory: async ({ accountPage }, use) => {
-    await use(async () => {
-      await accountPage.selectAccountNavItems(AccountNavItems.ORDERS);
     });
   },
 });

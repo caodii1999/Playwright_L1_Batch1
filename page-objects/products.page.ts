@@ -1,34 +1,17 @@
-import { Locator, Page } from "@playwright/test";
 import { BasePage } from "./base.page";
 import { logger } from "../helpers/logger";
 import { Product } from "../types/product.type";
 import { Sort } from "../enum/sort.enum";
 
 export class ProductPage extends BasePage {
-  readonly gridViewBtn: Locator;
-  readonly listViewBtn: Locator;
-  readonly multipleProductTitles: Locator;
-  readonly multipleProductPrices: Locator;
-  readonly addToCartBtn: Locator;
-  readonly sortBtn: Locator;
-  readonly allProducts: Locator;
+  readonly gridViewBtn = this.el("//div[contains(@class, 'switch-grid')]", "xpath");
+  readonly listViewBtn = this.el("//div[contains(@class, 'switch-list')]", "xpath");
+  readonly multipleProductTitles = this.el("//div[@class = 'text-center product-details']//h2[@class = 'product-title']", "xpath");
+  readonly multipleProductPrices = this.el("//div[@class='text-center product-details']//span[@class='woocommerce-Price-amount amount']/bdi[not(ancestor::del)]", "xpath");
+  readonly addToCartBtn = this.el("//div[@class = 'text-center product-details']//h2[@class = 'product-title']//following-sibling::a[text() = 'Add to cart']", "xpath");
+  readonly sortBtn = this.el("combobox:Shop order", "role");
+  readonly allProducts = this.el("//div[@class = 'et-loader product-ajax']", "xpath");
 
-  constructor(page: Page) {
-    super(page);
-    this.gridViewBtn = page.locator("//div[contains(@class, 'switch-grid')]");
-    this.listViewBtn = page.locator("//div[contains(@class, 'switch-list')]");
-    this.multipleProductTitles = page.locator(
-      "//div[@class = 'text-center product-details']//h2[@class = 'product-title']",
-    );
-    this.multipleProductPrices = page.locator(
-      "//div[@class='text-center product-details']//span[@class='woocommerce-Price-amount amount']/bdi[not(ancestor::del)]",
-    );
-    this.addToCartBtn = page.locator(
-      "//div[@class = 'text-center product-details']//h2[@class = 'product-title']//following-sibling::a[text() = 'Add to cart']",
-    );
-    this.sortBtn = page.locator("//select[@class = 'orderby']");
-    this.allProducts = page.locator("//div[@class = 'et-loader product-ajax']");
-  }
   async clickGridView(): Promise<void> {
     await this.gridViewBtn.click();
     await this.page.waitForURL("**/?view_mode=grid**");

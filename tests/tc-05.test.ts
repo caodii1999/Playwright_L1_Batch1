@@ -1,32 +1,32 @@
 import { test, expect } from "../fixtures/index";
 import { Order } from "../types/order.type";
+import { Pages } from "../enum/pages.enum";
 
 test("Verify orders appear in order history", async ({
   homePage,
+  accountPage,
   productPage,
   shoppingCartPage,
   checkoutPage,
   orderStatusPage,
-  accountPage,
   productDetailPage,
-  goto,
+  user,
   registerAccount,
-  login,
-  navigateToShopPage,
   fillBillingInfo,
   selectDefaultPaymentMethod,
   selectOrderHistory,
 }) => {
   let firstOrder: Order;
   let secondOrder: Order;
-
   let expectedOrders: Order[];
+
   await test.step("User has placed 02 orders", async () => {
-    await goto();
+    await homePage.goto();
     await homePage.navigateToAccountPage();
     await registerAccount();
-    await login();
+    await accountPage.login(user);
 
+    await homePage.navigateToPage(Pages.SHOP);
     await productPage.selectRandomItem();
     await productDetailPage.clickOnAddToCart();
     await productDetailPage.goToCart();
@@ -37,7 +37,7 @@ test("Verify orders appear in order history", async ({
 
     firstOrder = await orderStatusPage.getOrderInfo();
 
-    await navigateToShopPage();
+    await homePage.navigateToPage(Pages.SHOP);
     await productPage.selectRandomItem();
     await productDetailPage.clickOnAddToCart();
     await productDetailPage.goToCart();

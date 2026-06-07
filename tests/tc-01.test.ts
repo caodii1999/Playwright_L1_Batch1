@@ -1,35 +1,42 @@
 import { test, expect } from "../fixtures/index";
-import { ORDER_CONFIRMATION_MSG } from "../constants/order-status.constants";
+import { ORDER_CONFIRMATION_MSG } from "../constants/messages.constant";
+import { Product } from "../types/product.type";
+import { Departments } from "../enum/departments.enum";
 
 test("Verify users can buy an item successfully", async ({
   homePage,
+  accountPage,
   productPage,
   productDetailPage,
   shoppingCartPage,
   checkoutPage,
   orderStatusPage,
   expectedBilling,
-  goto,
+
+  user,
+
   registerAccount,
-  login,
-  navigateToElectronicComponentsSupplies,
   isCheckoutPageDisplayed,
   fillBillingInfo,
   selectDefaultPaymentMethod,
   isOrderStatusPageDisplayed,
 }) => {
+  let expectedProductInfo: Product;
+
+  await test.step("Register a valid account", async () => {
+    await registerAccount();
+  });
   await test.step("1. Open browser and go to https://demo.testarchitect.com/", async () => {
-    await goto();
+    await homePage.goto();
   });
 
   await test.step("2. Login with valid credentials ", async () => {
     await homePage.navigateToAccountPage();
-    await registerAccount();
-    await login();
+    await accountPage.login(user);
   });
 
   await test.step("3. Navigate to All departments section, 4. Select Electronic Components & Supplies", async () => {
-    await navigateToElectronicComponentsSupplies();
+    await accountPage.selectDepartmentItem(Departments.ELECTRONIC_COMPONENT);
   });
 
   await test.step("5. Verify the items should be displayed as a grid", async () => {
@@ -54,10 +61,9 @@ test("Verify users can buy an item successfully", async ({
   });
 
   await test.step("9. Click 'Add to Cart'", async () => {
+    expectedProductInfo = await productDetailPage.getProductInfo();
     await productDetailPage.clickOnAddToCart();
   });
-
-  const expectedProductInfo = await productDetailPage.getProductInfo();
 
   await test.step("10. Go to the cart", async () => {
     await productDetailPage.goToCart();
@@ -76,7 +82,7 @@ test("Verify users can buy an item successfully", async ({
     await shoppingCartPage.clickCheckout();
   });
 
-  await test.step("13. Verify Checkbout page displays", async () => {
+  await test.step("13. Verify Checkout page displays", async () => {
     expect
       .soft(
         await isCheckoutPageDisplayed(),

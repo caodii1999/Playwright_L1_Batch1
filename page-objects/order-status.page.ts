@@ -1,4 +1,3 @@
-import { Locator, Page } from "@playwright/test";
 import { BasePage } from "./base.page";
 import { logger } from "../helpers/logger";
 import { Product } from "../types/product.type";
@@ -6,56 +5,18 @@ import { Billing } from "../types/billing.type";
 import { Order } from "../types/order.type";
 
 export class OrderStatusPage extends BasePage {
-  readonly productName: Locator;
-  readonly productPrice: Locator;
-  readonly productQuantity: Locator;
-  readonly billingAddress: Locator;
-  readonly actualPhone: Locator;
-  readonly actualEmail: Locator;
-  readonly orderConfirmationMsg: Locator;
-  readonly orderNumberLocator: Locator;
-  readonly orderDateLocator: Locator;
-  readonly orderTotalLocator: Locator;
-  readonly orderPaymentMethodLocator: Locator;
-  readonly orderEmailLocator: Locator;
-
-  constructor(page: Page) {
-    super(page);
-    this.productName = page.locator(
-      "//section[@class = 'woocommerce-order-details']//table//tbody//tr//td//a",
-    );
-    this.productPrice = page.locator(
-      "//td[@class='woocommerce-table__product-total product-total']//span//bdi",
-    );
-    this.productQuantity = page.locator("//strong[@class='product-quantity']");
-    this.billingAddress = page.locator(
-      "//section[@class = 'woocommerce-customer-details']//address",
-    );
-    this.actualPhone = page.locator(
-      "//p[@class='woocommerce-customer-details--phone']",
-    );
-    this.actualEmail = page.locator(
-      "//p[@class='woocommerce-customer-details--email']",
-    );
-    this.orderConfirmationMsg = page.locator(
-      "//div[@class = 'woocommerce-order']//p[@class = 'woocommerce-notice woocommerce-notice--success woocommerce-thankyou-order-received']",
-    );
-    this.orderNumberLocator = page.locator(
-      "//div[@class = 'woocommerce-order-overview-wrapper']//ul//li[contains(text(), 'Order number')]//strong",
-    );
-    this.orderDateLocator = page.locator(
-      "//div[@class = 'woocommerce-order-overview-wrapper']//ul//li[contains(text(), 'Date: ')]//strong",
-    );
-    this.orderTotalLocator = page.locator(
-      "//div[@class = 'woocommerce-order-overview-wrapper']//ul//li[contains(text(), 'Total: ')]//strong",
-    );
-    this.orderPaymentMethodLocator = page.locator(
-      "//div[@class = 'woocommerce-order-overview-wrapper']//ul//li[contains(text(), 'Payment method: ')]//strong",
-    );
-    this.orderEmailLocator = page.locator(
-      "//div[@class = 'woocommerce-order-overview-wrapper']//ul//li[contains(text(), 'Email: ')]//strong",
-    );
-  }
+  readonly productName = this.el("//section[@class = 'woocommerce-order-details']//table//tbody//tr//td//a", "xpath");
+  readonly productPrice = this.el("//td[@class='woocommerce-table__product-total product-total']//span//bdi", "xpath");
+  readonly productQuantity = this.el("//strong[@class='product-quantity']", "xpath");
+  readonly billingAddress = this.el("//section[@class = 'woocommerce-customer-details']//address", "xpath");
+  readonly actualPhone = this.el("//p[@class='woocommerce-customer-details--phone']", "xpath");
+  readonly actualEmail = this.el("//p[@class='woocommerce-customer-details--email']", "xpath");
+  readonly orderConfirmationMsg = this.el("//div[@class = 'woocommerce-order']//p[@class = 'woocommerce-notice woocommerce-notice--success woocommerce-thankyou-order-received']", "xpath");
+  readonly orderNumberLocator = this.el("//div[@class = 'woocommerce-order-overview-wrapper']//ul//li[contains(text(), 'Order number')]//strong", "xpath");
+  readonly orderDateLocator = this.el("//div[@class = 'woocommerce-order-overview-wrapper']//ul//li[contains(text(), 'Date: ')]//strong", "xpath");
+  readonly orderTotalLocator = this.el("//div[@class = 'woocommerce-order-overview-wrapper']//ul//li[contains(text(), 'Total: ')]//strong", "xpath");
+  readonly orderPaymentMethodLocator = this.el("//div[@class = 'woocommerce-order-overview-wrapper']//ul//li[contains(text(), 'Payment method: ')]//strong", "xpath");
+  readonly orderEmailLocator = this.el("//div[@class = 'woocommerce-order-overview-wrapper']//ul//li[contains(text(), 'Email: ')]//strong", "xpath");
 
   async getProductName(): Promise<string> {
     logger.info("Retrieving product name from order details");
@@ -68,20 +29,18 @@ export class OrderStatusPage extends BasePage {
     const priceText = await this.productPrice.textContent();
     const price = parseFloat(
       priceText!
-        .replace("\u00A0", " ")
+        .replace(" ", " ")
         .replace("$", "")
         .replace(",", "")
         .replace(/[^0-9.\-]/g, "")
         .trim(),
     );
-
     logger.info(`price: ${price}`);
     return price;
   }
 
   async getProductQuantity(): Promise<number> {
     const qtyText = await this.productQuantity.innerText();
-
     const qty = parseInt(qtyText.replace("×", "").trim());
     logger.info(`Quantity: ${qty}`);
     return qty;
@@ -92,9 +51,7 @@ export class OrderStatusPage extends BasePage {
     const name = await this.getProductName();
     const price = await this.getProductPrice();
     const quantity = await this.getProductQuantity();
-    logger.info(
-      `ordered product name: ${name}, price: ${price}, quantity: ${quantity}`,
-    );
+    logger.info(`ordered product name: ${name}, price: ${price}, quantity: ${quantity}`);
     return { name, price, quantity };
   }
 
@@ -104,11 +61,7 @@ export class OrderStatusPage extends BasePage {
     const [firstName, lastName] = parts[0].trim().split(" ");
     const phoneNumber = (await this.actualPhone.innerText()).trim();
     const email = (await this.actualEmail.innerText()).trim();
-
-    logger.info(
-      `billing info — name: ${firstName} ${lastName}, address: ${parts[1].trim()}, city: ${parts[2].trim()}, country: ${parts[3].trim()}, phone: ${phoneNumber}, email: ${email}`,
-    );
-
+    logger.info(`billing info — name: ${firstName} ${lastName}, address: ${parts[1].trim()}, city: ${parts[2].trim()}, country: ${parts[3].trim()}, phone: ${phoneNumber}, email: ${email}`);
     return {
       firstName,
       lastName,
@@ -122,7 +75,7 @@ export class OrderStatusPage extends BasePage {
   }
 
   async getConfirmationMsg(): Promise<string> {
-    return await this.orderConfirmationMsg.innerText();
+    return this.orderConfirmationMsg.innerText();
   }
 
   async getAllOrderedProducts(): Promise<Product[]> {
@@ -131,14 +84,11 @@ export class OrderStatusPage extends BasePage {
     const products: Product[] = [];
 
     for (let i = 0; i < count; i++) {
-      const name = (await this.productName.nth(i).innerText())
-        .toLowerCase()
-        .trim();
-
+      const name = (await this.productName.nth(i).innerText()).toLowerCase().trim();
       const priceText = await this.productPrice.nth(i).innerText();
       const price = parseFloat(
         priceText
-          .replace("\u00A0", " ")
+          .replace(" ", " ")
           .replace("$", "")
           .replace(",", "")
           .replace(/[^0-9.\-]/g, "")
@@ -146,10 +96,7 @@ export class OrderStatusPage extends BasePage {
       );
       const qtyText = await this.productQuantity.nth(i).innerText();
       const quantity = parseInt(qtyText.replace("×", "").trim());
-
-      logger.info(
-        `Item ${i} -> name='${name}', price=${price}, qty=${quantity}`,
-      );
+      logger.info(`Item ${i} -> name='${name}', price=${price}, qty=${quantity}`);
       products.push({ name, price, quantity });
     }
 
@@ -159,8 +106,7 @@ export class OrderStatusPage extends BasePage {
 
   async getOrderNumber(): Promise<number> {
     await this.orderNumberLocator.waitFor({ state: "visible" });
-    const numberText = await this.orderNumberLocator.innerText();
-    return parseFloat(numberText.trim());
+    return parseFloat((await this.orderNumberLocator.innerText()).trim());
   }
 
   async getOrderDate(): Promise<string> {
@@ -175,7 +121,7 @@ export class OrderStatusPage extends BasePage {
     const totalText = await this.orderTotalLocator.innerText();
     return parseFloat(
       totalText
-        .replace("\u00A0", " ")
+        .replace(" ", " ")
         .replace("$", "")
         .replace(",", "")
         .replace(/[^0-9.\-]/g, "")
@@ -184,21 +130,19 @@ export class OrderStatusPage extends BasePage {
   }
 
   async getOrderPaymentMethod(): Promise<string> {
-    return await this.orderPaymentMethodLocator.innerText();
+    return this.orderPaymentMethodLocator.innerText();
   }
 
   async getOrderEmail(): Promise<string> {
-    return await this.orderEmailLocator.innerText();
+    return this.orderEmailLocator.innerText();
   }
 
   async getOrderInfo(): Promise<Order> {
     logger.info(`Getting order info`);
     const orderNumber = await this.getOrderNumber();
-    const orderDate = await this.getOrderDate();
-    const orderTotal = await this.getOrderTotal();
-    logger.info(
-      `Received order: name: ${orderNumber}, date: ${orderDate}, total: ${orderTotal}`,
-    );
-    return { orderNumber: orderNumber, date: orderDate, total: orderTotal };
+    const date = await this.getOrderDate();
+    const total = await this.getOrderTotal();
+    logger.info(`Received order: number: ${orderNumber}, date: ${date}, total: ${total}`);
+    return { orderNumber, date, total };
   }
 }

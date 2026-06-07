@@ -1,43 +1,34 @@
-import { Locator, Page } from "@playwright/test";
-import { logger } from "../helpers/logger";
+import { Page } from "@playwright/test";
+import { Element } from "../element/element";
+import { SelectorType } from "../element/element-factory";
 import { Departments } from "../enum/departments.enum";
 import { Pages } from "../enum/pages.enum";
+import { logger } from "../helpers/logger";
 
 export abstract class BasePage {
-  readonly loginSignUpBtn: Locator;
-  readonly cartBtn: Locator;
-  readonly allDepartmentMenu: Locator;
-  readonly cookieAcceptBtn: Locator;
-  readonly dismissBanner: Locator;
-  readonly productAddedPopup: Locator;
-  readonly cartQuantity: Locator;
+  readonly loginSignUpBtn = this.el(
+    "//a[contains(@href,'my-account')]//span[contains(@class,'et-element-label inline-block mob-hide')]",
+    "xpath",
+  );
+  readonly cartBtn = this.el(
+    "//div[contains(@class,'et_element')]/div[contains(@class,'et_b_header-cart')]/a",
+    "xpath",
+  );
+  readonly allDepartmentMenu = this.el("All departments", "text");
+  readonly dynamicDepartmentItems = this.el(
+    "//div[@class = 'secondary-menu-wrapper']//div[ul[@id = 'menu-all-departments-1']]//li[a[contains(text(), '{0}')]]",
+    "xpath",
+  );
+  readonly dynamicPageNavItems = this.el("//ul[@id = 'menu-main-menu-1']//li[a[text() = '{0}']]", "xpath");
 
-  getDepartmentMenu(value: string): Locator {
-    return this.page.locator(
-      `//div[@class = 'secondary-menu-wrapper']//div[ul[@id = 'menu-all-departments-1']]//li[a[contains(text(), '${value}')]]`,
-    );
+  constructor(protected readonly page: Page) {}
+
+  async navigateToPage(page: Pages): Promise<void> {
+    await this.dynamicPageNavItems.setDynamic(page).click();
   }
 
-  getNavItem(value: string): Locator {
-    return this.page.locator(
-      `//ul[@id = 'menu-main-menu-1']//li[a[text() = '${value}']]`,
-    );
-  }
-
-  constructor(protected page: Page) {
-    this.loginSignUpBtn = page.locator("//a[contains(@href,'my-account')]//span[contains(@class,'et-element-label inline-block mob-hide')]");
-    this.cartBtn = page.locator(
-      "//div[contains(@class,'et_element')]/div[contains(@class,'et_b_header-cart')]/a",
-    );
-    this.allDepartmentMenu = page.getByText("All departments");
-    this.cookieAcceptBtn = page.locator('a:has-text("Ok")');
-    this.dismissBanner = page.locator('a:has-text("Dismiss")');
-    this.productAddedPopup = page.locator(
-      "//div[contains(text(), 'Product added')]",
-    );
-    this.cartQuantity = page.locator(
-      "//div[contains(@class,'et_element')]/div[contains(@class,'et_b_header-cart')]/a/span/span/span[contains(@class, 'et-cart-quantity et-quantity')]",
-    );
+  protected el(selector: string, type?: SelectorType, exact = true): Element {
+    return new Element(this.page, selector, type, exact);
   }
 
   async goto(url: string = "/"): Promise<void> {
@@ -56,9 +47,9 @@ export abstract class BasePage {
     logger.info(`Click on Cart button`);
   }
 
-  async navigateToDeparment(department: Departments): Promise<void> {
+  async selectDepartmentItem(department: Departments): Promise<void> {
     await this.allDepartmentMenu.hover();
-    await this.getDepartmentMenu(department).click({ delay: 2 });
+    await this.dynamicDepartmentItems.setDynamic(department).click();
     logger.info(`Navigate to department: ${department}`);
   }
 
@@ -70,25 +61,5 @@ export abstract class BasePage {
     } catch {
       return false;
     }
-  }
-
-  async dismissPopups(): Promise<void> {
-    if (await this.dismissBanner.isVisible()) {
-      await this.dismissBanner.click();
-      logger.info("Dismissed banner");
-    }
-
-    if (await this.cookieAcceptBtn.isVisible()) {
-      await this.cookieAcceptBtn.click();
-      logger.info("Accepted cookie");
-    }
-  }
-
-  async navigateToPage(page: Pages): Promise<void> {
-    return this.getNavItem(page).click();
-  }
-
-  async waitForProductAddedPopupDisappear(): Promise<void> {
-    this.productAddedPopup.waitFor({ state: "hidden" });
   }
 }

@@ -2,56 +2,34 @@ import { Locator, Page } from "@playwright/test";
 import { BasePage } from "./base.page";
 import { logger } from "../helpers/logger";
 import { Order } from "../types/order.type";
+import { User } from "../types/user.type";
+import { AccountNavItems } from "../enum/account-nav-items.enum";
 
 export class AccountPage extends BasePage {
-  readonly regisEmailTextbox: Locator;
-  readonly registerBtn: Locator;
-  readonly usernameTextbox: Locator;
-  readonly passwordTextbox: Locator;
-  readonly loginBtn: Locator;
-  readonly newPasswordTextbox: Locator;
-  readonly reEnterNewPasswordTextbox: Locator;
-  readonly saveBtn: Locator;
-  readonly orderNumbersLocator: Locator;
-  readonly orderDatesLocator: Locator;
-  readonly orderTotalLocator: Locator;
+  readonly regisEmailTextbox = this.el("textbox:Email address *", "role");
+  readonly registerBtn = this.el("button:Register", "role");
+  readonly usernameTextbox = this.el("textbox:Username or email address *", "role");
+  readonly passwordTextbox = this.el("textbox:Password *", "role");
+  readonly loginBtn = this.el("button:Log in", "role");
+  readonly newPasswordTextbox = this.el("textbox:New password *", "role");
+  readonly reEnterNewPasswordTextbox = this.el("textbox:Re-enter new password *", "role");
+  readonly saveBtn = this.el("button:Save", "role");
+  readonly orderNumbersLocator= this.el("//table[@class = 'woocommerce-orders-table woocommerce-MyAccount-orders shop_table shop_table_responsive my_account_orders account-orders-table']//tbody//tr/td[@data-title = 'Order']//a", "xpath");
+  readonly orderDatesLocator = this.el("//table[@class = 'woocommerce-orders-table woocommerce-MyAccount-orders shop_table shop_table_responsive my_account_orders account-orders-table']//tbody//tr/td[@data-title = 'Date']//time", "xpath");
+  readonly orderTotalLocator = this.el("//table[@class = 'woocommerce-orders-table woocommerce-MyAccount-orders shop_table shop_table_responsive my_account_orders account-orders-table']//tbody//tr/td[@data-title = 'Total']//span[@class = 'woocommerce-Price-amount amount']", "xpath");
+  readonly dynamicAccountNavItemLocator = this.el("{0}:{1}", "role", false)
 
-  getAccountNavItem(value: string): Locator {
-    return this.page.locator(
-      `//nav[@class = 'woocommerce-MyAccount-navigation']//ul//li//a[contains(text(), '${value}')]`,
-    );
-  }
-
-  constructor(page: Page) {
-    super(page);
-    this.regisEmailTextbox = page.locator("//input[@id = 'reg_email']");
-    this.registerBtn = page.getByRole("button", { name: "REGISTER" });
-    this.usernameTextbox = page.locator("//input[@id = 'username']");
-    this.passwordTextbox = page.locator("//input[@id = 'password']");
-    this.loginBtn = page.getByRole("button", { name: "LOG IN" });
-    this.newPasswordTextbox = page.locator("//input[@id = 'password_1']");
-    this.reEnterNewPasswordTextbox = page.locator(
-      "//input[@id = 'password_2']",
-    );
-    this.saveBtn = page.getByRole("button", { name: "SAVE" });
-    this.orderNumbersLocator = page.locator(
-      "//table[@class = 'woocommerce-orders-table woocommerce-MyAccount-orders shop_table shop_table_responsive my_account_orders account-orders-table']//tbody//tr/td[@data-title = 'Order']//a",
-    );
-    this.orderDatesLocator = page.locator(
-      "//table[@class = 'woocommerce-orders-table woocommerce-MyAccount-orders shop_table shop_table_responsive my_account_orders account-orders-table']//tbody//tr/td[@data-title = 'Date']//time",
-    );
-    this.orderTotalLocator = page.locator(
-      "//table[@class = 'woocommerce-orders-table woocommerce-MyAccount-orders shop_table shop_table_responsive my_account_orders account-orders-table']//tbody//tr/td[@data-title = 'Total']//span[@class = 'woocommerce-Price-amount amount']",
-    );
-  }
-
-  async login(username: string, password: string): Promise<void> {
-    await this.usernameTextbox.fill(username);
-    logger.info(`fill username: ${username}`);
-    await this.passwordTextbox.fill(password);
-    logger.info(`fill password: ${password}`);
+  async login(user: User): Promise<void> {
+    await this.usernameTextbox.fill(user.username);
+    logger.info(`fill username: ${user.username}`);
+    await this.passwordTextbox.fill(user.password);
+    logger.info(`fill password: ${user.password}`);
     await this.loginBtn.click();
     logger.info(`login button clicked`);
+  }
+
+  async logout(): Promise<void>{
+    await this.clickAccountNavItems(AccountNavItems.LOGOUT);
   }
 
   async register(username: string): Promise<void> {
@@ -70,8 +48,8 @@ export class AccountPage extends BasePage {
     logger.info(`Clicked on Save button`);
   }
 
-  async selectAccountNavItems(item: string): Promise<void> {
-    await this.getAccountNavItem(item).click();
+  async clickAccountNavItems(value: string): Promise<void> {
+    await this.dynamicAccountNavItemLocator.setDynamic("link", value).click();
   }
 
   async getAllOrderNumber(index: number): Promise<number> {

@@ -1,45 +1,43 @@
-import { Locator, Page } from "@playwright/test";
-import { BasePage } from "./base.page";
-import { Product } from "../types/product.type";
+import { BillingErrors } from "../enum/billing-errors.enum";
+import { BillingInputs } from "../enum/billing-inputs.enum";
 import { PaymentMethod } from "../enum/payments.enum";
 import { logger } from "../helpers/logger";
-import { BillingInputs } from "../enum/billing-inputs.enum";
 import { Billing } from "../types/billing.type";
-import { BillingErrors } from "../enum/billing-errors.enum";
+import { Product } from "../types/product.type";
+import { BasePage } from "./base.page";
 
 export class CheckoutPage extends BasePage {
-  readonly productNameAndQuantity: Locator;
-  readonly productPrice: Locator;
-  readonly productQuantity: Locator;
-  readonly countryDropdown: Locator;
-  readonly countrySearch: Locator;
-  readonly placeOrderBtn: Locator;
-
-  getPaymentMethod(value: string): Locator {
-    return this.page.locator(
-      `//div[@id='order_review']//div//ul//li//label[contains(text(), "${value}")]`,
-    );
-  }
-
-  getBillingInput(value: string): Locator {
-    return this.page.locator(`//input[@id="${value}"]`);
-  }
-
-  constructor(page: Page) {
-    super(page);
-    this.productNameAndQuantity = page.locator(
-      "//div[@id='order_review']//table//tbody//tr//td[@class='product-name']",
-    );
-    this.productPrice = page.locator("//td[@class='product-total']//span//bdi");
-    this.productQuantity = page.locator("//strong[@class='product-quantity']");
-    this.countryDropdown = page.locator(
-      "//span[@id='select2-billing_country-container']",
-    );
-    this.placeOrderBtn = page.locator("//button[@id='place_order']");
-    this.countrySearch = page.locator(
-      "//input[@class='select2-search__field']",
-    );
-  }
+  readonly productNameAndQuantity = this.el(
+    "//div[@id='order_review']//table//tbody//tr//td[@class='product-name']",
+    "xpath",
+  );
+  readonly productPrice = this.el(
+    "//td[@class='product-total']//span//bdi",
+    "xpath",
+  );
+  readonly productQuantity = this.el(
+    "//strong[@class='product-quantity']",
+    "xpath",
+  );
+  readonly countryDropdown = this.el(
+    "//span[@id='select2-billing_country-container']",
+    "xpath",
+  );
+  readonly countrySearch = this.el(
+    "//input[@class='select2-search__field']",
+    "xpath",
+  );
+  readonly placeOrderBtn = this.el("button:Place order", "role");
+  readonly dynamicPaymentMethodLocator = this.el("{0}", "label");
+  readonly dynamicBillingInputLocator = this.el("//input[@id='{0}']", "xpath");
+  readonly billingErrorsContainer = this.el(
+    "//ul[@class = 'woocommerce-error']",
+    "xpath",
+  );
+  readonly billingErrorsLocator = this.el(
+    "//ul[@class = 'woocommerce-error']//li",
+    "xpath",
+  );
 
   async getProductName(): Promise<string> {
     const fullName = await this.productNameAndQuantity.innerText();
@@ -87,7 +85,7 @@ export class CheckoutPage extends BasePage {
   }
 
   async selectPaymentMethod(payment: PaymentMethod): Promise<void> {
-    await this.getPaymentMethod(payment).click();
+    await this.dynamicPaymentMethodLocator.setDynamic(payment).click();
   }
 
   async selectCountryDropDown(value: string): Promise<void> {
@@ -97,16 +95,18 @@ export class CheckoutPage extends BasePage {
     logger.info(`Selected country: ${value}`);
   }
 
+  async fillBillingInput(value: string, billing: string) {
+    return this.dynamicBillingInputLocator.setDynamic(value).fill(billing);
+  }
+
   async fillBillingInfo(billing: Billing): Promise<void> {
     logger.info(`Filling billing form: ${billing.email}`);
-    await this.getBillingInput(BillingInputs.FIRST_NAME).fill(
-      billing.firstName,
-    );
-    await this.getBillingInput(BillingInputs.LAST_NAME).fill(billing.lastName);
-    await this.getBillingInput(BillingInputs.ADDRESS).fill(billing.address);
-    await this.getBillingInput(BillingInputs.CITY).fill(billing.city);
-    await this.getBillingInput(BillingInputs.PHONE).fill(billing.phoneNumber);
-    await this.getBillingInput(BillingInputs.EMAIL).fill(billing.email);
+    await this.fillBillingInput(BillingInputs.FIRST_NAME, billing.firstName);
+    await this.fillBillingInput(BillingInputs.LAST_NAME, billing.lastName);
+    await this.fillBillingInput(BillingInputs.ADDRESS, billing.address);
+    await this.fillBillingInput(BillingInputs.CITY, billing.city);
+    await this.fillBillingInput(BillingInputs.PHONE, billing.phoneNumber);
+    await this.fillBillingInput(BillingInputs.EMAIL, billing.email);
     await this.selectCountryDropDown(billing.country);
   }
 
@@ -114,15 +114,21 @@ export class CheckoutPage extends BasePage {
     await this.placeOrderBtn.click();
   }
 
+  async getErrorsContent(): Promise<string[]> {
+    await this.billingErrorsContainer.waitFor({ state: "visible" });
+    const count = await this.billingErrorsLocator.count();
+    const errors: string[] = [];
+    for (let i = 0; i < count; i++) {
+      const text = await this.billingErrorsLocator.nth(i).innerText();
+      errors.push(text.trim());
+    }
+    logger.info(`Billing errors: ${errors}`);
+    return errors;
+  }
+
   async isErrorMsgMatchMissingField(): Promise<boolean> {
-    const expectedErrorMessages: Record<string, string> = {
-      billing_first_name: BillingErrors.BILLING_FIRST_NAME_ERROR,
-      billing_last_name: BillingErrors.BILLING_LAST_NAME_ERROR,
-      billing_address_1: BillingErrors.BILLING_ADDRESS_ERROR,
-      billing_city: BillingErrors.BILLING_CITY_ERROR,
-      billing_phone: BillingErrors.BILLING_PHONE_ERROR,
-      billing_email: BillingErrors.BILLING_EMAIL_ERROR,
-    };
-    return true;
+    const actualErrors = await this.getErrorsContent();
+    const expectedErrors = Object.values(BillingErrors) as string[];
+    return expectedErrors.every((expected) => actualErrors.includes(expected));
   }
 }

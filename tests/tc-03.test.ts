@@ -1,31 +1,34 @@
 import { test, expect } from "../fixtures/index";
-import { ORDER_CONFIRMATION_MSG } from "../constants/order-status.constants";
+import { ORDER_CONFIRMATION_MSG } from "../constants/messages.constant";
+import { Pages } from "../enum/pages.enum";
+import { userInfo } from "node:os";
 
 test.describe("Buy item flow", () => {
   test("Direct bank transfer", async ({
     homePage,
+    accountPage,
     productPage,
     productDetailPage,
     shoppingCartPage,
     checkoutPage,
     orderStatusPage,
-    goto,
-    registerAccount,
-    login,
-    navigateToShopPage,
+
+    user,
+
+    registerAccount,  
     fillBillingInfo,
     selectDefaultPaymentMethod,
   }) => {
     await test.step("1. Open browser and go to https://demo.testarchitect.com/", async () => {
-      await goto();
+      await homePage.goto();
     });
     await test.step("2. Login with valid credentials ", async () => {
       await homePage.navigateToAccountPage();
       await registerAccount();
-      await login();
+      await accountPage.login(user);
     });
     await test.step("3. Go to Shop page", async () => {
-      await navigateToShopPage();
+      await homePage.navigateToPage(Pages.SHOP);
     });
     await test.step("4. Select an item and add to cart", async () => {
       await productPage.selectRandomItem();
@@ -51,28 +54,28 @@ test.describe("Buy item flow", () => {
 
   test("Check payments", async ({
     homePage,
+    accountPage,
     productPage,
     productDetailPage,
     shoppingCartPage,
     checkoutPage,
     orderStatusPage,
-    goto,
+    
+    user,
     registerAccount,
-    login,
-    navigateToShopPage,
     fillBillingInfo,
     selectCheckPaymentMethod,
   }) => {
     await test.step("1. Open browser and go to https://demo.testarchitect.com/", async () => {
-      await goto();
+      await homePage.goto();
     });
     await test.step("2. Login with valid credentials ", async () => {
       await homePage.navigateToAccountPage();
       await registerAccount();
-      await login();
+      await accountPage.login(user);
     });
     await test.step("3. Go to Shop page", async () => {
-      await navigateToShopPage();
+      await homePage.navigateToPage(Pages.SHOP);
     });
     await test.step("4. Select an item and add to cart", async () => {
       await productPage.selectRandomItem();
@@ -98,28 +101,27 @@ test.describe("Buy item flow", () => {
 
   test("Cash on delivery", async ({
     homePage,
+    accountPage,
     productPage,
     productDetailPage,
     shoppingCartPage,
     checkoutPage,
     orderStatusPage,
-    goto,
+    user,
     registerAccount,
-    login,
-    navigateToShopPage,
     fillBillingInfo,
     selectCODMethod,
   }) => {
     await test.step("1. Open browser and go to https://demo.testarchitect.com/", async () => {
-      await goto();
+      await homePage.goto();
     });
     await test.step("2. Login with valid credentials ", async () => {
       await homePage.navigateToAccountPage();
       await registerAccount();
-      await login();
+      await accountPage.login(user);
     });
     await test.step("3. Go to Shop page", async () => {
-      await navigateToShopPage();
+      await homePage.navigateToPage(Pages.SHOP);
     });
     await test.step("4. Select an item and add to cart", async () => {
       await productPage.selectRandomItem();
