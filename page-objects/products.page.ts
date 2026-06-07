@@ -70,7 +70,14 @@ export class ProductPage extends BasePage {
 
       const name = (await title.textContent())?.toLowerCase().trim() ?? "";
       const priceText = (await priceElement.textContent()) ?? "";
-      const price = parseFloat(priceText.replace("$", "").trim());
+      const price = parseFloat(
+        priceText
+          .replace(" ", " ")
+          .replace("$", "")
+          .replace(",", "")
+          .replace(/[^0-9.\-]/g, "")
+          .trim(),
+      );
 
       await addBtn.scrollIntoViewIfNeeded();
       await addBtn.click();

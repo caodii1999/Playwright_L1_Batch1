@@ -43,8 +43,8 @@ export class ProductDetailPage extends BasePage {
   );
 
   async clickOnAddToCart(): Promise<void> {
-    await this.addToCartBtn.scrollIntoViewIfNeeded();
-    await this.addToCartBtn.click();
+    await this.addToCartBtn.first().scrollIntoViewIfNeeded();
+    await this.addToCartBtn.first().click();
     logger.info(`Click on Add to Cart button`);
   }
 

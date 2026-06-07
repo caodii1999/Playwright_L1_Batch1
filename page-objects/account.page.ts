@@ -17,7 +17,7 @@ export class AccountPage extends BasePage {
   readonly orderNumbersLocator= this.el("//table[@class = 'woocommerce-orders-table woocommerce-MyAccount-orders shop_table shop_table_responsive my_account_orders account-orders-table']//tbody//tr/td[@data-title = 'Order']//a", "xpath");
   readonly orderDatesLocator = this.el("//table[@class = 'woocommerce-orders-table woocommerce-MyAccount-orders shop_table shop_table_responsive my_account_orders account-orders-table']//tbody//tr/td[@data-title = 'Date']//time", "xpath");
   readonly orderTotalLocator = this.el("//table[@class = 'woocommerce-orders-table woocommerce-MyAccount-orders shop_table shop_table_responsive my_account_orders account-orders-table']//tbody//tr/td[@data-title = 'Total']//span[@class = 'woocommerce-Price-amount amount']", "xpath");
-  readonly dynamicAccountNavItemLocator = this.el("{0}:{1}", "role", false)
+  readonly dynamicAccountNavItemLocator = this.el("{0}", "text");
 
   async login(user: User): Promise<void> {
     await this.usernameTextbox.fill(user.username);
@@ -49,7 +49,7 @@ export class AccountPage extends BasePage {
   }
 
   async clickAccountNavItems(value: string): Promise<void> {
-    await this.dynamicAccountNavItemLocator.setDynamic("link", value).click();
+    await this.dynamicAccountNavItemLocator.setDynamic(value).click();
   }
 
   async getAllOrderNumber(index: number): Promise<number> {

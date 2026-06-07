@@ -29,6 +29,10 @@ export class ShoppingCartPage extends BasePage {
     "//td[@class = 'product-subtotal']//span//bdi",
     "xpath",
   );
+  readonly loadingUI = this.el(
+    "//div[@class = 'blockUI blockOverlay']",
+    "xpath",
+  );
   readonly updateCartBtn = this.el("button:Update cart", "role");
   readonly plusBtn = this.el("//span[@class = 'plus']", "xpath");
   readonly minusBtn = this.el("//span[@class = 'minus']", "xpath");
@@ -84,6 +88,9 @@ export class ShoppingCartPage extends BasePage {
 
   async setQuantity(number: number): Promise<void> {
     await this.productQuantities.fill(String(number));
+    await this.productQuantities.press("Enter");
+    await this.loadingUI.first().waitFor({ state: "visible" });
+    await this.loadingUI.first().waitFor({ state: "hidden" });
   }
 
   async isSubTotalValid(): Promise<boolean> {
@@ -147,13 +154,19 @@ export class ShoppingCartPage extends BasePage {
 
   async clickPlusQty(): Promise<void> {
     await this.plusBtn.click();
+    await this.loadingUI.first().waitFor({ state: "visible" });
+    await this.loadingUI.first().waitFor({ state: "hidden" });
   }
 
   async clickMinusQty(): Promise<void> {
     await this.minusBtn.click();
+    await this.loadingUI.first().waitFor({ state: "visible" });
+    await this.loadingUI.first().waitFor({ state: "hidden" });
   }
 
   async clickUpdateCart(): Promise<void> {
     await this.updateCartBtn.click();
+    await this.loadingUI.first().waitFor({ state: "visible" });
+    await this.loadingUI.first().waitFor({ state: "hidden" });
   }
 }

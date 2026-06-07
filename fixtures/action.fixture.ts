@@ -1,10 +1,9 @@
 import { test as base } from "./page.fixture";
 
-import { Product } from "../types/product.type";
 import { Pages } from "../enum/pages.enum";
 import { PaymentMethod } from "../enum/payments.enum";
 import { Sort } from "../enum/sort.enum";
-import { AccountNavItems } from "../enum/account-nav-items.enum";
+import { Product } from "../types/product.type";
 import { User } from "../types/user.type";
 
 export const test = base.extend<{
@@ -15,7 +14,6 @@ export const test = base.extend<{
   selectCheckPaymentMethod: () => Promise<void>;
   selectCODMethod: () => Promise<void>;
   isOrderStatusPageDisplayed: () => Promise<boolean>;
-  navigateToShopPage: () => Promise<void>;
   selectRandomMultipleItemsAndGetInfo: (count: number) => Promise<Product[]>;
   selectSortLowToHigh: () => Promise<void>;
   selectSortHighToLow: () => Promise<void>;
@@ -29,11 +27,7 @@ export const test = base.extend<{
       accountPage,
       productPage,
       productDetailPage,
-      shoppingCartPage,
-      checkoutPage,
       registerAccount,
-      fillBillingInfo,
-      selectDefaultPaymentMethod
     },
     use,
   ) => {
@@ -49,7 +43,7 @@ export const test = base.extend<{
       await accountPage.logout();
     });
   },
-  registerAccount: async ({ homePage, accountPage, page, user, mail }, use) => {
+  registerAccount: async ({ accountPage, page, user, mail }, use) => {
     await use(async () => {
       await accountPage.register(user.username);
       const resetUrl = await mail.getResetPasswordUrl();

@@ -16,6 +16,7 @@ test("Verify users can update quantity of product in cart", async ({
   });
 
   await test.step("2. Login with valid credentials", async () => {
+    await homePage.navigateToAccountPage();
     await registerAccount();
     await accountPage.login(user);
   });
@@ -58,7 +59,6 @@ test("Verify users can update quantity of product in cart", async ({
 
   await test.step("9. Enter 4 into quantity textbox then click on UPDATE CART button", async () => {
     await shoppingCartPage.setQuantity(4);
-    await shoppingCartPage.clickUpdateCart();
   });
 
   await test.step("10. Verify quantity of product is 4 and SUB TOTAL price", async () => {

@@ -1,6 +1,7 @@
 import { test, expect } from "../fixtures/index";
 import { Order } from "../types/order.type";
 import { Pages } from "../enum/pages.enum";
+import { AccountNavItems } from "../enum/account-nav-items.enum";
 
 test("Verify orders appear in order history", async ({
   homePage,
@@ -14,7 +15,6 @@ test("Verify orders appear in order history", async ({
   registerAccount,
   fillBillingInfo,
   selectDefaultPaymentMethod,
-  selectOrderHistory,
 }) => {
   let firstOrder: Order;
   let secondOrder: Order;
@@ -56,7 +56,7 @@ test("Verify orders appear in order history", async ({
   });
 
   await test.step("2. Click on Orders in left navigation", async () => {
-    await selectOrderHistory();
+    await accountPage.clickAccountNavItems(AccountNavItems.ORDERS);
   });
 
   await test.step("3. Verify order details", async () => {

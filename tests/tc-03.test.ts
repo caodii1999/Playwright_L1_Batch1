@@ -80,7 +80,7 @@ test.describe("Buy item flow", () => {
     await test.step("4. Select an item and add to cart", async () => {
       await productPage.selectRandomItem();
       await productDetailPage.clickOnAddToCart();
-      await productDetailPage.clickOnAddToCart();
+      await productDetailPage.goToCart();
     });
     await test.step("5. Go to Checkout page", async () => {
       await shoppingCartPage.clickCheckout();
@@ -126,7 +126,7 @@ test.describe("Buy item flow", () => {
     await test.step("4. Select an item and add to cart", async () => {
       await productPage.selectRandomItem();
       await productDetailPage.clickOnAddToCart();
-      await productDetailPage.clickOnAddToCart();
+      await productDetailPage.goToCart();
     });
     await test.step("5. Go to Checkout page", async () => {
       await shoppingCartPage.clickCheckout();
